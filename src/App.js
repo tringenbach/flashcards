@@ -7,8 +7,8 @@ import wrong from './audio/wrong.mp3'
 
 function getAdditionProblems() {
   const rv = [];
-  for (let i = 0; i <= 12; i++) {
-    for (let j = 0; j <= 12; j++) {
+  for (let i = 0; i <= 10; i++) {
+    for (let j = 0; j <= 10; j++) {
       rv.push({
         problem: `${i} + ${j}`,
         solution: i + j
