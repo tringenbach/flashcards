@@ -38,6 +38,9 @@ function App() {
   const [ answered, setAnswered ] = useState(false);
   const [ userSolution, setUserSolution ] = useState(null);
 
+  const correctAnswer = (answered && userSolution == problem.solution);
+  const incorrectAnswer = (answered && userSolution != problem.solution)
+
   return (
     <div className="App">
       <header className="App-header">
@@ -45,16 +48,31 @@ function App() {
         <p style={{ fontSize: '40px'}}>
           {problem.problem} = 
           { !answered &&
-          <form onSubmit={() => setAnswered(true)}>
-            <input autoFocus type="text" size={2} onInput={e => setUserSolution(e.target.value)}/>
+          <form style={{ display: 'inline' }} onSubmit={() => setAnswered(true)}>
+            <span> </span><input autoFocus type="text" size={2} style={{ fontSize: '40px'}} onInput={e => setUserSolution(e.target.value)}/>
           </form>
           }
-          { answered && <span> {problem.solution}</span>}
-          { (answered && userSolution == problem.solution) && <span>✅<RightAudio /></span>}
-          { (answered && userSolution != problem.solution) && <span>❌<WrongAudio /></span>}
+          { answered && <span> {userSolution}</span>}
+          { correctAnswer && <span> ✅<RightAudio /></span>}
+          { incorrectAnswer && <span> ❌<WrongAudio /></span>}
 
+          { incorrectAnswer && (
+            <span>
+              <button style={{ marginLeft: '20px' }} onClick={() => setAnswered(false)}>Try Again</button>
+            </span>
+        )}
+
+        { correctAnswer && (
+          <button style={{ marginLeft: '20px' }} onClick={() => window.location.reload()}>Next</button>
+        )}
 
         </p>
+        { incorrectAnswer &&
+        <p>
+        The answer was {problem.solution}
+        </p>
+        }
+
       </header>
       <main>
         <div>
