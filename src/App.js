@@ -25,6 +25,16 @@ function getRandomProblem(problems) {
   return problems[index];
 }
 
+function RightAudios({count}) {
+  const [ times, setTimes ] = useState(count);
+  return <audio onEnded={(e) => {
+    if (times > 1) {
+      e.target.play();
+      setTimes(times - 1);
+    }
+  }} autoplay="true" src={ right } /> 
+}
+
 function RightAudio() {
   return <audio autoplay="true" src={ right } />
 }
@@ -33,6 +43,7 @@ function WrongAudio() {
 }
 
 function App() {
+  const [ streak, setStreak ] = useState(0);
   const problems = getAdditionProblems();
   const [ problem, setProblem ] = useState(getRandomProblem(problems));
   const [ answered, setAnswered ] = useState(false);
@@ -45,15 +56,24 @@ function App() {
     <div className="App">
       <header className="App-header">
         {/* <img src={logo} className="App-logo" alt="logo" /> */}
+        { streak > 0 &&
+          <p>
+            Streak: {streak} {"✅".repeat(streak)}
+          </p>
+        }
         <p style={{ fontSize: '40px'}}>
           {problem.problem} = 
           { !answered &&
-          <form style={{ display: 'inline' }} onSubmit={() => setAnswered(true)}>
+          <form style={{ display: 'inline' }} onSubmit={() => {
+            setAnswered(true);
+            if (userSolution == problem.solution) setStreak(streak + 1);
+            else setStreak(0);
+          }}>
             <span> </span><input autoFocus type="text" size={2} style={{ fontSize: '40px'}} onInput={e => setUserSolution(e.target.value)}/>
           </form>
           }
           { answered && <span> {userSolution}</span>}
-          { correctAnswer && <span> ✅<RightAudio /></span>}
+          { correctAnswer && <span> ✅<RightAudios count={ streak } /></span>}
           { incorrectAnswer && <span> ❌<WrongAudio /></span>}
 
           { incorrectAnswer && (
@@ -63,7 +83,11 @@ function App() {
         )}
 
         { correctAnswer && (
-          <button style={{ marginLeft: '20px' }} onClick={() => window.location.reload()}>Next</button>
+          <button style={{ marginLeft: '20px' }} onClick={() => {
+            setProblem(getRandomProblem(problems));
+            setAnswered(false);
+            setUserSolution(null);
+          }}>Next</button>
         )}
 
         </p>
